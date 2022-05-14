@@ -12,6 +12,7 @@ namespace DrippyAL
         private uint alSource;
 
         private float volume;
+
         private Vector3 position;
 
         private WaveData? current;
@@ -25,7 +26,10 @@ namespace DrippyAL
                 alSource = al.GenSource();
 
                 volume = 1F;
-                position = Vector3.Zero;
+                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+
+                position = device.ListernerPosition - device.ListernerDirection;
+                al.SetSourceProperty(alSource, SourceVector3.Position, position);
             }
             catch (Exception e)
             {

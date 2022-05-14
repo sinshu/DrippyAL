@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using DrippyAL;
 
 public static class Program
@@ -22,7 +23,11 @@ public static class Program
             channel.Play(wave);
             Console.ReadKey();
 
-            channel.Volume = 0.5F;
+            channel.Position = new Vector3(-1F, 0F, 0F);
+
+            Console.ReadKey();
+
+            channel.Position = new Vector3(1F, 0F, 0F);
 
             Console.ReadKey();
         }
