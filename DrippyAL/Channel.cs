@@ -5,6 +5,9 @@ using Silk.NET.OpenAL;
 
 namespace DrippyAL
 {
+    /// <summary>
+    /// Represents an audio channel to play wave data.
+    /// </summary>
     public unsafe sealed class Channel : IDisposable
     {
         private AL? al;
@@ -17,6 +20,10 @@ namespace DrippyAL
 
         private WaveData? waveData;
 
+        /// <summary>
+        /// Creates a new audio channel.
+        /// </summary>
+        /// <param name="device">The <see cref="AudioDevice"/> for which the new channel is to be created.</param>
         public Channel(AudioDevice device)
         {
             try
@@ -50,6 +57,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Disposes the resources held by the <see cref="Channel"/>.
+        /// </summary>
         public void Dispose()
         {
             if (al == null)
@@ -67,6 +77,10 @@ namespace DrippyAL
             al = null;
         }
 
+        /// <summary>
+        /// Plays a sound from the specified wave data.
+        /// </summary>
+        /// <param name="waveData">The wave data to be played.</param>
         public void Play(WaveData waveData)
         {
             if (al == null)
@@ -85,6 +99,9 @@ namespace DrippyAL
             al.SourcePlay(alSource);
         }
 
+        /// <summary>
+        /// Stops playing sound.
+        /// </summary>
         public void Stop()
         {
             if (al == null)
@@ -102,6 +119,9 @@ namespace DrippyAL
             waveData = null;
         }
 
+        /// <summary>
+        /// Pauses playing sound.
+        /// </summary>
         public void Pause()
         {
             if (al == null)
@@ -117,6 +137,9 @@ namespace DrippyAL
             al.SourcePause(alSource);
         }
 
+        /// <summary>
+        /// Resumes playing sound after pause.
+        /// </summary>
         public void Resume()
         {
             if (al == null)
@@ -145,6 +168,10 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the volume.
+        /// The value must be between 0 and 1.
+        /// </summary>
         public float Volume
         {
             get
@@ -169,6 +196,10 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the pitch.
+        /// The playback frequency will be multiplied by this value.
+        /// </summary>
         public float Pitch
         {
             get
@@ -193,6 +224,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the sound source.
+        /// </summary>
         public Vector3 Position
         {
             get
@@ -217,6 +251,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets the current playback state of the channel.
+        /// </summary>
         public PlaybackState State
         {
             get
@@ -247,6 +284,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets the current playing offset of the wave data.
+        /// </summary>
         public TimeSpan PlayingOffset
         {
             get

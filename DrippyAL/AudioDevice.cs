@@ -5,6 +5,9 @@ using Silk.NET.OpenAL;
 
 namespace DrippyAL
 {
+    /// <summary>
+    /// Represents an audio device.
+    /// </summary>
     public unsafe sealed class AudioDevice : IDisposable
     {
         private ALContext? alc;
@@ -16,6 +19,9 @@ namespace DrippyAL
         private Vector3 listenerPosition;
         private float[] listenerOrientation;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AudioDevice"/> class.
+        /// </summary>
         public AudioDevice()
         {
             try
@@ -52,6 +58,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Disposes the resources held by the <see cref="AudioDevice"/>.
+        /// </summary>
         public void Dispose()
         {
             if (alc != null)
@@ -95,6 +104,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the listener.
+        /// </summary>
         public Vector3 ListernerPosition
         {
             get
@@ -119,6 +131,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the direction of the listener.
+        /// </summary>
         public Vector3 ListernerDirection
         {
             get
@@ -151,6 +166,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets or sets the up vector of the listener.
+        /// </summary>
         public Vector3 ListernerUpVector
         {
             get

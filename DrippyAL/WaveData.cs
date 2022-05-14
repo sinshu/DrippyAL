@@ -4,6 +4,10 @@ using Silk.NET.OpenAL;
 
 namespace DrippyAL
 {
+    /// <summary>
+    /// Represents an instance of wave data for playback.
+    /// To play a sound from the wave data, use the <see cref="Channel.Play(WaveData)"/> method.
+    /// </summary>
     public unsafe sealed class WaveData : IDisposable
     {
         private AL? al;
@@ -15,6 +19,13 @@ namespace DrippyAL
 
         private TimeSpan duration;
 
+        /// <summary>
+        /// Creates a new instance of wave data from the 16-bit PCM data.
+        /// </summary>
+        /// <param name="device">The <see cref="AudioDevice"/> to play the wave data.</param>
+        /// <param name="sampleRate">The sample rate of the wave data.</param>
+        /// <param name="channelCount">The number of channels of the wave data. This value must be 1 or 2.</param>
+        /// <param name="data">The wave data for playback. The format must be 16-bit PCM.</param>
         public WaveData(AudioDevice device, int sampleRate, int channelCount, Span<short> data)
         {
             try
@@ -71,6 +82,13 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of wave data from the 8-bit PCM data.
+        /// </summary>
+        /// <param name="device">The <see cref="AudioDevice"/> to play the wave data.</param>
+        /// <param name="sampleRate">The sample rate of the wave data.</param>
+        /// <param name="channelCount">The number of channels of the wave data. This value must be 1 or 2.</param>
+        /// <param name="data">The wave data for playback. The format must be 8-bit PCM.</param>
         public WaveData(AudioDevice device, int sampleRate, int channelCount, Span<byte> data)
         {
             try
@@ -127,6 +145,9 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Disposes the resources held by the <see cref="WaveData"/>.
+        /// </summary>
         public void Dispose()
         {
             if (al == null)
@@ -156,8 +177,19 @@ namespace DrippyAL
             }
         }
 
+        /// <summary>
+        /// Gets the sample rate of the wave data.
+        /// </summary>
         public int SampleRate => sampleRate;
+
+        /// <summary>
+        /// Gets the number of channels of the wave data.
+        /// </summary>
         public int ChannelCount => channelCount;
+
+        /// <summary>
+        /// Gets the duration of the wave data.
+        /// </summary>
         public TimeSpan Duration => duration;
     }
 }
