@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrippyAL", "DrippyAL\DrippyAL.csproj", "{DBBDA636-14B2-4450-8CA6-D0BEC5FBB042}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspace", "Workspace\Workspace.csproj", "{F2A07E1F-4A75-4F73-B1EA-B007CAB01F65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBBDA636-14B2-4450-8CA6-D0BEC5FBB042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBBDA636-14B2-4450-8CA6-D0BEC5FBB042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBBDA636-14B2-4450-8CA6-D0BEC5FBB042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBBDA636-14B2-4450-8CA6-D0BEC5FBB042}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A07E1F-4A75-4F73-B1EA-B007CAB01F65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A07E1F-4A75-4F73-B1EA-B007CAB01F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A07E1F-4A75-4F73-B1EA-B007CAB01F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A07E1F-4A75-4F73-B1EA-B007CAB01F65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E46E920B-17E2-4AC8-A396-BB9431B83CF0}
+	EndGlobalSection
+EndGlobal
