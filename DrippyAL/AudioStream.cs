@@ -108,6 +108,41 @@ namespace DrippyAL
         {
         }
 
+        public void Dispose()
+        {
+            if (al == null)
+            {
+                return;
+            }
+
+            if (pollingTask != null)
+            {
+                stopped = true;
+                pollingTask.Wait();
+            }
+
+            if (alSource != 0)
+            {
+                al.SourceStop(alSource);
+                al.DeleteSource(alSource);
+                alSource = 0;
+            }
+
+            if (alBuffers != null)
+            {
+                for (var i = 0; i < alBuffers.Length; i++)
+                {
+                    if (alBuffers[i] != 0)
+                    {
+                        al.DeleteBuffer(alBuffers[i]);
+                        alBuffers[i] = 0;
+                    }
+                }
+            }
+
+            al = null;
+        }
+
         public void Play(Action<short[]> fillBlock)
         {
             if (al == null)
@@ -189,59 +224,6 @@ namespace DrippyAL
                     al.SourceUnqueueBuffers(alSource, alBufferQueue);
                 }
             }
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (al == null)
-            {
-                return;
-            }
-
-            stopped = true;
-
-            if (disposing)
-            {
-                if (pollingTask != null)
-                {
-                    pollingTask.Wait();
-                }
-            }
-
-            if (alSource != 0)
-            {
-                al.SourceStop(alSource);
-                al.DeleteSource(alSource);
-                alSource = 0;
-            }
-
-            if (alBuffers != null)
-            {
-                for (var i = 0; i < alBuffers.Length; i++)
-                {
-                    if (alBuffers[i] != 0)
-                    {
-                        al.DeleteBuffer(alBuffers[i]);
-                        alBuffers[i] = 0;
-                    }
-                }
-            }
-
-            al = null;
-        }
-
-        /// <summary>
-        /// Stops the sound stream and disposes internal resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~AudioStream()
-        {
-            Dispose(false);
         }
 
         /// <summary>
