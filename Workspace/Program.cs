@@ -15,19 +15,14 @@ public static class Program
                 data[i] = (short)random.Next(short.MinValue, short.MaxValue);
             }
 
-            var waveData = new WaveData(device, 44100, 1, data);
+            var wave = new WaveData(device, 44100, 1, data);
 
             var channel = new Channel(device);
 
-            channel.Play(waveData);
-
+            channel.Play(wave);
             Console.ReadKey();
 
-            channel.Pause();
-
-            Console.ReadKey();
-
-            channel.Resume();
+            channel.Volume = 0.5F;
 
             Console.ReadKey();
         }

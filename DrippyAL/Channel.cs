@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.ExceptionServices;
 using Silk.NET.OpenAL;
 
@@ -10,6 +11,11 @@ namespace DrippyAL
 
         private uint alSource;
 
+        private float volume;
+        private Vector3 position;
+
+        private WaveData? current;
+
         public Channel(AudioDevice device)
         {
             try
@@ -17,6 +23,9 @@ namespace DrippyAL
                 al = device.AL;
 
                 alSource = al.GenSource();
+
+                volume = 1F;
+                position = Vector3.Zero;
             }
             catch (Exception e)
             {
@@ -31,6 +40,7 @@ namespace DrippyAL
             {
                 if (alSource != 0)
                 {
+                    al.SourceStop(alSource);
                     al.DeleteSource(alSource);
                     alSource = 0;
                 }
@@ -39,14 +49,16 @@ namespace DrippyAL
             }
         }
 
-        public void Play(WaveData data)
+        public void Play(WaveData waveData)
         {
             if (al == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            al.SetSourceProperty(alSource, SourceInteger.Buffer, data.AlBuffer);
+            current = waveData;
+
+            al.SetSourceProperty(alSource, SourceInteger.Buffer, current.AlBuffer);
             al.SourcePlay(alSource);
         }
 
@@ -57,7 +69,14 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
+            if (current == null)
+            {
+                return;
+            }
+
             al.SourceStop(alSource);
+
+            current = null;
         }
 
         public void Pause()
@@ -65,6 +84,11 @@ namespace DrippyAL
             if (al == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
+            }
+
+            if (current == null)
+            {
+                return;
             }
 
             al.SourcePause(alSource);
@@ -75,6 +99,11 @@ namespace DrippyAL
             if (al == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
+            }
+
+            if (current == null)
+            {
+                return;
             }
 
             al.SourcePlay(alSource);
@@ -93,7 +122,7 @@ namespace DrippyAL
             }
         }
 
-        public ChannelState Status
+        public float Volume
         {
             get
             {
@@ -102,10 +131,58 @@ namespace DrippyAL
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
-                int state;
-                al.GetSourceProperty(alSource, GetSourceInteger.SourceState, out state);
+                return volume;
+            }
 
-                switch ((SourceState)state)
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                volume = value;
+                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+            }
+        }
+
+        public Vector3 Position
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                return position;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                position = value;
+                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+            }
+        }
+
+        public ChannelState State
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                int value;
+                al.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
+
+                switch ((SourceState)value)
                 {
                     case SourceState.Initial:
                     case SourceState.Stopped:
@@ -120,6 +197,22 @@ namespace DrippyAL
                     default:
                         throw new Exception();
                 }
+            }
+        }
+
+        public TimeSpan PlayOffset
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                float value;
+                al.GetSourceProperty(alSource, SourceFloat.SecOffset, out value);
+
+                return TimeSpan.FromSeconds(value);
             }
         }
     }
