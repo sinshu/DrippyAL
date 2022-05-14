@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,10 @@ namespace DrippyAL
         private uint alSource;
         private uint[] alBuffers;
         private BufferFormat format;
+
+        private float volume;
+        private float pitch;
+        private Vector3 position;
 
         private short[] blockData;
         private uint[] alBufferQueue;
@@ -88,6 +93,15 @@ namespace DrippyAL
 
                 format = channelCount == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16;
 
+                volume = 1F;
+                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+
+                pitch = 1F;
+                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+
+                position = device.ListernerPosition - device.ListernerDirection;
+                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+
                 blockData = new short[channelCount * blockLength];
                 alBufferQueue = new uint[1];
             }
@@ -147,7 +161,7 @@ namespace DrippyAL
         {
             if (al == null)
             {
-                throw new Exception();
+                throw new ObjectDisposedException(nameof(AudioStream));
             }
 
             if (fillBlock == null)
@@ -180,6 +194,11 @@ namespace DrippyAL
 
         public void Stop()
         {
+            if (al == null)
+            {
+                throw new ObjectDisposedException(nameof(AudioStream));
+            }
+
             stopped = true;
         }
 
@@ -226,9 +245,78 @@ namespace DrippyAL
             }
         }
 
-        /// <summary>
-        /// Gets a value that indicates whether the sound is playing.
-        /// </summary>
+        public float Volume
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                return volume;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                volume = value;
+                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+            }
+        }
+
+        public float Pitch
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                return pitch;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                pitch = value;
+                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+            }
+        }
+
+        public Vector3 Position
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                return position;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                position = value;
+                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+            }
+        }
+
         public PlaybackState State
         {
             get

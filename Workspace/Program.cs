@@ -19,6 +19,10 @@ public static class Program
             stream.Play(data => sequencer.RenderInterleavedInt16(data));
 
             Console.ReadKey();
+
+            stream.Pitch = 0.5F;
+
+            Console.ReadKey();
         }
     }
 }
