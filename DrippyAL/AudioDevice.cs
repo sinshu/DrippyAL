@@ -27,7 +27,10 @@ namespace DrippyAL
                 context = alc.CreateContext(device, null);
 
                 alc.MakeContextCurrent(context);
-                al.GetError();
+                if (al.GetError() != AudioError.NoError)
+                {
+                    throw new Exception("Failed to initialize the audio device.");
+                }
 
                 listenerPosition = new Vector3(0F, 0F, 0F);
                 al.SetListenerProperty(ListenerVector3.Position, in listenerPosition);

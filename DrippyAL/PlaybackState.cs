@@ -2,7 +2,7 @@
 
 namespace DrippyAL
 {
-    public enum ChannelState
+    public enum PlaybackState
     {
         Stopped = 1,
         Playing,

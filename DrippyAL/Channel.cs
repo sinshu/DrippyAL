@@ -12,21 +12,33 @@ namespace DrippyAL
         private uint alSource;
 
         private float volume;
-
+        private float pitch;
         private Vector3 position;
 
-        private WaveData? current;
+        private WaveData? waveData;
 
         public Channel(AudioDevice device)
         {
             try
             {
+                if (device == null)
+                {
+                    throw new ArgumentNullException(nameof(device));
+                }
+
                 al = device.AL;
 
                 alSource = al.GenSource();
+                if (al.GetError() != AudioError.NoError)
+                {
+                    throw new Exception("Failed to generate an audio source.");
+                }
 
                 volume = 1F;
                 al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+
+                pitch = 1F;
+                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
 
                 position = device.ListernerPosition - device.ListernerDirection;
                 al.SetSourceProperty(alSource, SourceVector3.Position, position);
@@ -40,17 +52,19 @@ namespace DrippyAL
 
         public void Dispose()
         {
-            if (al != null)
+            if (al == null)
             {
-                if (alSource != 0)
-                {
-                    al.SourceStop(alSource);
-                    al.DeleteSource(alSource);
-                    alSource = 0;
-                }
-
-                al = null;
+                return;
             }
+
+            if (alSource != 0)
+            {
+                al.SourceStop(alSource);
+                al.DeleteSource(alSource);
+                alSource = 0;
+            }
+
+            al = null;
         }
 
         public void Play(WaveData waveData)
@@ -60,9 +74,14 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            current = waveData;
+            if (waveData == null)
+            {
+                throw new ArgumentNullException(nameof(waveData));
+            }
 
-            al.SetSourceProperty(alSource, SourceInteger.Buffer, current.AlBuffer);
+            this.waveData = waveData;
+
+            al.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
             al.SourcePlay(alSource);
         }
 
@@ -73,14 +92,14 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (current == null)
+            if (waveData == null)
             {
                 return;
             }
 
             al.SourceStop(alSource);
 
-            current = null;
+            waveData = null;
         }
 
         public void Pause()
@@ -90,7 +109,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (current == null)
+            if (waveData == null)
             {
                 return;
             }
@@ -105,7 +124,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (current == null)
+            if (waveData == null)
             {
                 return;
             }
@@ -150,6 +169,30 @@ namespace DrippyAL
             }
         }
 
+        public float Pitch
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                return pitch;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                pitch = value;
+                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+            }
+        }
+
         public Vector3 Position
         {
             get
@@ -174,7 +217,7 @@ namespace DrippyAL
             }
         }
 
-        public ChannelState State
+        public PlaybackState State
         {
             get
             {
@@ -190,13 +233,13 @@ namespace DrippyAL
                 {
                     case SourceState.Initial:
                     case SourceState.Stopped:
-                        return ChannelState.Stopped;
+                        return PlaybackState.Stopped;
 
                     case SourceState.Playing:
-                        return ChannelState.Playing;
+                        return PlaybackState.Playing;
 
                     case SourceState.Paused:
-                        return ChannelState.Paused;
+                        return PlaybackState.Paused;
 
                     default:
                         throw new Exception();
@@ -204,7 +247,7 @@ namespace DrippyAL
             }
         }
 
-        public TimeSpan PlayOffset
+        public TimeSpan PlayingOffset
         {
             get
             {
