@@ -78,7 +78,25 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Plays a sound from the specified wave data.
+        /// Plays the wave data which is currently attached to the channel.
+        /// </summary>
+        public void Play()
+        {
+            if (al == null)
+            {
+                throw new ObjectDisposedException(nameof(Channel));
+            }
+
+            if (waveData == null)
+            {
+                return;
+            }
+
+            al.SourcePlay(alSource);
+        }
+
+        /// <summary>
+        /// Plays the specified wave data.
         /// </summary>
         /// <param name="waveData">The wave data to be played.</param>
         public void Play(WaveData waveData)
@@ -93,9 +111,8 @@ namespace DrippyAL
                 throw new ArgumentNullException(nameof(waveData));
             }
 
-            this.waveData = waveData;
+            WaveData = waveData;
 
-            al.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
             al.SourcePlay(alSource);
         }
 
@@ -115,8 +132,6 @@ namespace DrippyAL
             }
 
             al.SourceStop(alSource);
-
-            waveData = null;
         }
 
         /// <summary>
@@ -138,9 +153,9 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Resumes playing sound after pause.
+        /// Resets the playback state.
         /// </summary>
-        public void Resume()
+        public void Rewind()
         {
             if (al == null)
             {
@@ -152,10 +167,14 @@ namespace DrippyAL
                 return;
             }
 
-            al.SourcePlay(alSource);
+            al.SourceRewind(alSource);
         }
 
-        internal uint AlSource
+        /// <summary>
+        /// Gets or sets the <see cref="DrippyAL.WaveData"/> to be played.
+        /// Set this property to null to detach the wave data from the channel so that the wave data can be safely disposed.
+        /// </summary>
+        public WaveData? WaveData
         {
             get
             {
@@ -164,7 +183,28 @@ namespace DrippyAL
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
-                return alSource;
+                return waveData;
+            }
+
+            set
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(Channel));
+                }
+
+                al.SourceStop(alSource);
+
+                if (value == null)
+                {
+                    waveData = null;
+                    al.SetSourceProperty(alSource, SourceInteger.Buffer, 0);
+                }
+                else
+                {
+                    waveData = value;
+                    al.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
+                }
             }
         }
 
