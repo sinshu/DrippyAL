@@ -51,7 +51,7 @@ using (var stream = new AudioStream(device, sampleRate, 1))
 }
 ```
 
-## Midi synthesis with [MeltySynth](https://github.com/sinshu/meltysynth/)
+## MIDI synthesis with [MeltySynth](https://github.com/sinshu/meltysynth/)
 
 ```cs
 var sampleRate = 44100;
