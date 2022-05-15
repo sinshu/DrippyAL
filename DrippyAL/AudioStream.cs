@@ -280,6 +280,16 @@ namespace DrippyAL
         }
 
         /// <summary>
+        /// Gets the latency for audio processing in milliseconds.
+        /// </summary>
+        public int Latency => latency;
+
+        /// <summary>
+        /// Gets the block length for audio processing in sample frames.
+        /// </summary>
+        public int BlockLength => blockLength;
+
+        /// <summary>
         /// Gets or sets the volume.
         /// The value must be between 0 and 1.
         /// </summary>
