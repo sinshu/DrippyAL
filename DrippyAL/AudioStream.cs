@@ -310,7 +310,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 return volume;
@@ -320,7 +320,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 volume = value;
@@ -338,7 +338,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 return pitch;
@@ -348,7 +348,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 pitch = value;
@@ -365,7 +365,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 return position;
@@ -375,7 +375,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 position = value;
@@ -392,7 +392,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioStream));
                 }
 
                 int value;
