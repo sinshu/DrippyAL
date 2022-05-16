@@ -10,8 +10,11 @@ namespace DrippyAL
     /// <summary>
     /// Provides the functionalities for streaming audio.
     /// </summary>
-    public unsafe sealed class AudioStream : IDisposable
+    public sealed class AudioStream : IDisposable
     {
+        private static readonly int defaultLatency = 200;
+        private static readonly int defaultBlockLength = 2048;
+
         private AudioDevice device;
         private int sampleRate;
         private int channelCount;
@@ -128,7 +131,7 @@ namespace DrippyAL
         /// <param name="sampleRate">The sample rate of the audio stream.</param>
         /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
         public AudioStream(AudioDevice device, int sampleRate, int channelCount)
-            : this(device, sampleRate, channelCount, 200, 1024)
+            : this(device, sampleRate, channelCount, defaultLatency, defaultBlockLength)
         {
         }
 
@@ -140,7 +143,7 @@ namespace DrippyAL
         /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
         /// <param name="latency">The desired latency for audio processing in milliseconds.</param>
         public AudioStream(AudioDevice device, int sampleRate, int channelCount, int latency)
-            : this(device, sampleRate, channelCount, latency, 1024)
+            : this(device, sampleRate, channelCount, latency, defaultBlockLength)
         {
         }
 

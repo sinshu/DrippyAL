@@ -128,7 +128,7 @@ namespace DrippyAL
                     throw new Exception("Failed to generate an audio buffer.");
                 }
 
-                var format = channelCount == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16;
+                var format = channelCount == 1 ? BufferFormat.Mono8 : BufferFormat.Stereo8;
                 var size = sizeof(byte) * data.Length;
                 fixed (byte* p = data)
                 {

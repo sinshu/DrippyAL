@@ -9,7 +9,7 @@ namespace DrippyAL
     /// <summary>
     /// Represents an audio channel to play wave data.
     /// </summary>
-    public unsafe sealed class Channel : IDisposable
+    public sealed class Channel : IDisposable
     {
         private AudioDevice device;
 

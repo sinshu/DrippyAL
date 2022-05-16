@@ -8,6 +8,7 @@ public static class Examples
     public static void RunAll()
     {
         OneSecSine();
+        OneSecSine8bit();
         StreamingSine();
         MidiSynthesis();
     }
@@ -19,6 +20,26 @@ public static class Examples
         var data = Enumerable
             .Range(0, sampleRate)
             .Select(t => (short)(32000 * MathF.Sin(2 * MathF.PI * frequency * t / sampleRate)))
+            .ToArray();
+
+        using (var device = new AudioDevice())
+        {
+            var wave = new WaveData(device, sampleRate, 1, data);
+            var channel = new Channel(device);
+
+            channel.Play(wave);
+
+            Console.ReadKey();
+        }
+    }
+
+    public static void OneSecSine8bit()
+    {
+        var sampleRate = 44100;
+        var frequency = 440;
+        var data = Enumerable
+            .Range(0, sampleRate)
+            .Select(t => (byte)(128 + 120 * MathF.Sin(2 * MathF.PI * frequency * t / sampleRate)))
             .ToArray();
 
         using (var device = new AudioDevice())
