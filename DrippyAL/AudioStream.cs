@@ -12,18 +12,16 @@ namespace DrippyAL
     /// </summary>
     public unsafe sealed class AudioStream : IDisposable
     {
-        private AL? al;
-
+        private AudioDevice device;
         private int sampleRate;
         private int channelCount;
-
         private int latency;
         private int blockLength;
 
-        private uint alSource;
         private uint[] alBuffers;
         private BufferFormat format;
 
+        private uint alSource;
         private float volume;
         private float pitch;
         private Vector3 position;
@@ -31,9 +29,9 @@ namespace DrippyAL
         private short[] blockData;
         private uint[] alBufferQueue;
 
-        private volatile bool stopped;
-        private Action<short[]>? fillBlock;
-        private Task? pollingTask;
+        private Action<short[]> fillBlock;
+        private CancellationTokenSource pollingCts;
+        private Task pollingTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioStream"/> class.
@@ -57,7 +55,7 @@ namespace DrippyAL
                     throw new ArgumentException("The sample rate must be a positive value.", nameof(sampleRate));
                 }
 
-                if (!(channelCount == 1 || channelCount == 2))
+                if (channelCount != 1 && channelCount != 2)
                 {
                     throw new ArgumentException("The number of channels must be 1 or 2.", nameof(channelCount));
                 }
@@ -72,11 +70,9 @@ namespace DrippyAL
                     throw new ArgumentException("The block length must be greater than or equal to 8.", nameof(blockLength));
                 }
 
-                al = device.AL;
-
+                this.device = device;
                 this.sampleRate = sampleRate;
                 this.channelCount = channelCount;
-
                 this.latency = latency;
                 this.blockLength = blockLength;
 
@@ -86,17 +82,11 @@ namespace DrippyAL
                     bufferCount = 2;
                 }
 
-                alSource = al.GenSource();
-                if (al.GetError() != AudioError.NoError)
-                {
-                    throw new Exception("Failed to generate an audio source.");
-                }
-
                 alBuffers = new uint[bufferCount];
                 for (var i = 0; i < alBuffers.Length; i++)
                 {
-                    alBuffers[i] = al.GenBuffer();
-                    if (al.GetError() != AudioError.NoError)
+                    alBuffers[i] = device.AL.GenBuffer();
+                    if (device.AL.GetError() != AudioError.NoError)
                     {
                         throw new Exception("Failed to generate an audio buffer.");
                     }
@@ -104,17 +94,25 @@ namespace DrippyAL
 
                 format = channelCount == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16;
 
+                alSource = device.AL.GenSource();
+                if (device.AL.GetError() != AudioError.NoError)
+                {
+                    throw new Exception("Failed to generate an audio source.");
+                }
+
                 volume = 1F;
-                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Gain, volume);
 
                 pitch = 1F;
-                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
 
                 position = device.ListernerPosition - device.ListernerDirection;
-                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+                device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
 
                 blockData = new short[channelCount * blockLength];
                 alBufferQueue = new uint[1];
+
+                device.AddResource(this);
             }
             catch (Exception e)
             {
@@ -151,21 +149,23 @@ namespace DrippyAL
         /// </summary>
         public void Dispose()
         {
-            if (al == null)
+            if (device == null)
             {
                 return;
             }
 
             if (pollingTask != null)
             {
-                stopped = true;
+                pollingCts.Cancel();
                 pollingTask.Wait();
+                pollingCts = null;
+                pollingTask = null;
             }
 
             if (alSource != 0)
             {
-                al.SourceStop(alSource);
-                al.DeleteSource(alSource);
+                device.AL.SourceStop(alSource);
+                device.AL.DeleteSource(alSource);
                 alSource = 0;
             }
 
@@ -175,13 +175,14 @@ namespace DrippyAL
                 {
                     if (alBuffers[i] != 0)
                     {
-                        al.DeleteBuffer(alBuffers[i]);
+                        device.AL.DeleteBuffer(alBuffers[i]);
                         alBuffers[i] = 0;
                     }
                 }
             }
 
-            al = null;
+            device.RemoveResource(this);
+            device = null;
         }
 
         /// <summary>
@@ -190,7 +191,7 @@ namespace DrippyAL
         /// <param name="fillBlock">The callback function to generate the wave data.</param>
         public void Play(Action<short[]> fillBlock)
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(AudioStream));
             }
@@ -200,27 +201,27 @@ namespace DrippyAL
                 throw new ArgumentNullException(nameof(fillBlock));
             }
 
+            // If the previous playback is still ongoing, we have to stop it.
             if (pollingTask != null)
             {
-                stopped = true;
+                pollingCts.Cancel();
                 pollingTask.Wait();
             }
-
-            stopped = false;
 
             this.fillBlock = fillBlock;
 
             for (var i = 0; i < alBuffers.Length; i++)
             {
                 fillBlock(blockData);
-                al.BufferData(alBuffers[i], format, blockData, sampleRate);
+                device.AL.BufferData(alBuffers[i], format, blockData, sampleRate);
                 alBufferQueue[0] = alBuffers[i];
-                al.SourceQueueBuffers(alSource, alBufferQueue);
+                device.AL.SourceQueueBuffers(alSource, alBufferQueue);
             }
 
-            al.SourcePlay(alSource);
+            device.AL.SourcePlay(alSource);
 
-            pollingTask = Task.Run(PollingLoop);
+            pollingCts = new CancellationTokenSource();
+            pollingTask = Task.Run(() => PollingLoop(pollingCts.Token));
         }
 
         /// <summary>
@@ -228,53 +229,50 @@ namespace DrippyAL
         /// </summary>
         public void Stop()
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(AudioStream));
             }
 
-            stopped = true;
+            if (pollingTask != null)
+            {
+                pollingCts.Cancel();
+            }
         }
 
-        private void PollingLoop()
+        private void PollingLoop(CancellationToken ct)
         {
-            // This is to avoid nullable warning.
-            if (al == null || fillBlock == null)
-            {
-                throw new Exception();
-            }
-
-            while (!stopped)
+            while (!ct.IsCancellationRequested)
             {
                 int processedCount;
-                al.GetSourceProperty(alSource, GetSourceInteger.BuffersProcessed, out processedCount);
+                device.AL.GetSourceProperty(alSource, GetSourceInteger.BuffersProcessed, out processedCount);
                 for (var i = 0; i < processedCount; i++)
                 {
                     fillBlock(blockData);
-                    al.SourceUnqueueBuffers(alSource, alBufferQueue);
-                    al.BufferData(alBufferQueue[0], format, blockData, sampleRate);
-                    al.SourceQueueBuffers(alSource, alBufferQueue);
+                    device.AL.SourceUnqueueBuffers(alSource, alBufferQueue);
+                    device.AL.BufferData(alBufferQueue[0], format, blockData, sampleRate);
+                    device.AL.SourceQueueBuffers(alSource, alBufferQueue);
                 }
 
                 int value;
-                al.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
+                device.AL.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
                 if (value == (int)SourceState.Stopped)
                 {
-                    al.SourcePlay(alSource);
+                    device.AL.SourcePlay(alSource);
                 }
 
                 Thread.Sleep(1);
             }
 
-            al.SourceStop(alSource);
+            device.AL.SourceStop(alSource);
 
             {
                 // We have to unqueue remaining buffers for next playback.
                 int processedCount;
-                al.GetSourceProperty(alSource, GetSourceInteger.BuffersProcessed, out processedCount);
+                device.AL.GetSourceProperty(alSource, GetSourceInteger.BuffersProcessed, out processedCount);
                 for (var i = 0; i < processedCount; i++)
                 {
-                    al.SourceUnqueueBuffers(alSource, alBufferQueue);
+                    device.AL.SourceUnqueueBuffers(alSource, alBufferQueue);
                 }
             }
         }
@@ -297,7 +295,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -307,13 +305,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 volume = value;
-                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Gain, volume);
             }
         }
 
@@ -325,7 +323,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -335,13 +333,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 pitch = value;
-                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
             }
         }
 
@@ -352,7 +350,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -362,13 +360,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 position = value;
-                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+                device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
             }
         }
 
@@ -379,13 +377,13 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 int value;
-                al.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
+                device.AL.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
 
                 switch ((SourceState)value)
                 {

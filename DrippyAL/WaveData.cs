@@ -10,8 +10,7 @@ namespace DrippyAL
     /// </summary>
     public unsafe sealed class WaveData : IDisposable
     {
-        private AL? al;
-
+        private AudioDevice device;
         private int sampleRate;
         private int channelCount;
 
@@ -40,7 +39,7 @@ namespace DrippyAL
                     throw new ArgumentException("The sample rate must be a positive value.", nameof(sampleRate));
                 }
 
-                if (!(channelCount == 1 || channelCount == 2))
+                if (channelCount != 1 && channelCount != 2)
                 {
                     throw new ArgumentException("The number of channels must be 1 or 2.", nameof(channelCount));
                 }
@@ -55,13 +54,12 @@ namespace DrippyAL
                     throw new ArgumentException("The length of the data must be even if the audio format is stereo.");
                 }
 
-                al = device.AL;
-
+                this.device = device;
                 this.sampleRate = sampleRate;
                 this.channelCount = channelCount;
 
-                alBuffer = al.GenBuffer();
-                if (al.GetError() != AudioError.NoError)
+                alBuffer = device.AL.GenBuffer();
+                if (device.AL.GetError() != AudioError.NoError)
                 {
                     throw new Exception("Failed to generate an audio buffer.");
                 }
@@ -70,10 +68,12 @@ namespace DrippyAL
                 var size = sizeof(short) * data.Length;
                 fixed (short* p = data)
                 {
-                    al.BufferData(alBuffer, format, p, size, sampleRate);
+                    device.AL.BufferData(alBuffer, format, p, size, sampleRate);
                 }
 
                 duration = TimeSpan.FromSeconds(data.Length / channelCount / (double)sampleRate);
+
+                device.AddResource(this);
             }
             catch (Exception e)
             {
@@ -103,7 +103,7 @@ namespace DrippyAL
                     throw new ArgumentException("The sample rate must be a positive value.", nameof(sampleRate));
                 }
 
-                if (!(channelCount == 1 || channelCount == 2))
+                if (channelCount != 1 && channelCount != 2)
                 {
                     throw new ArgumentException("The number of channels must be 1 or 2.", nameof(channelCount));
                 }
@@ -118,25 +118,26 @@ namespace DrippyAL
                     throw new ArgumentException("The length of the data must be even if the audio format is stereo.");
                 }
 
-                al = device.AL;
-
+                this.device = device;
                 this.sampleRate = sampleRate;
                 this.channelCount = channelCount;
 
-                alBuffer = al.GenBuffer();
-                if (al.GetError() != AudioError.NoError)
+                alBuffer = device.AL.GenBuffer();
+                if (device.AL.GetError() != AudioError.NoError)
                 {
                     throw new Exception("Failed to generate an audio buffer.");
                 }
 
-                var format = channelCount == 1 ? BufferFormat.Mono8 : BufferFormat.Stereo8;
+                var format = channelCount == 1 ? BufferFormat.Mono16 : BufferFormat.Stereo16;
                 var size = sizeof(byte) * data.Length;
                 fixed (byte* p = data)
                 {
-                    al.BufferData(alBuffer, format, p, size, sampleRate);
+                    device.AL.BufferData(alBuffer, format, p, size, sampleRate);
                 }
 
                 duration = TimeSpan.FromSeconds(data.Length / channelCount / (double)sampleRate);
+
+                device.AddResource(this);
             }
             catch (Exception e)
             {
@@ -150,32 +151,22 @@ namespace DrippyAL
         /// </summary>
         public void Dispose()
         {
-            if (al == null)
+            if (device == null)
             {
                 return;
             }
 
             if (alBuffer != 0)
             {
-                al.DeleteBuffer(alBuffer);
+                device.AL.DeleteBuffer(alBuffer);
                 alBuffer = 0;
             }
 
-            al = null;
+            device.RemoveResource(this);
+            device = null;
         }
 
-        internal uint AlBuffer
-        {
-            get
-            {
-                if (al == null)
-                {
-                    throw new ObjectDisposedException(nameof(WaveData));
-                }
-
-                return alBuffer;
-            }
-        }
+        internal uint AlBuffer => alBuffer;
 
         /// <summary>
         /// Gets the sample rate of the wave data.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.ExceptionServices;
 using Silk.NET.OpenAL;
@@ -10,15 +11,14 @@ namespace DrippyAL
     /// </summary>
     public unsafe sealed class Channel : IDisposable
     {
-        private AL? al;
+        private AudioDevice device;
 
         private uint alSource;
-
         private float volume;
         private float pitch;
         private Vector3 position;
 
-        private WaveData? waveData;
+        private WaveData waveData;
 
         /// <summary>
         /// Creates a new audio channel.
@@ -33,22 +33,24 @@ namespace DrippyAL
                     throw new ArgumentNullException(nameof(device));
                 }
 
-                al = device.AL;
+                this.device = device;
 
-                alSource = al.GenSource();
-                if (al.GetError() != AudioError.NoError)
+                alSource = device.AL.GenSource();
+                if (device.AL.GetError() != AudioError.NoError)
                 {
                     throw new Exception("Failed to generate an audio source.");
                 }
 
                 volume = 1F;
-                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Gain, volume);
 
                 pitch = 1F;
-                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
 
                 position = device.ListernerPosition - device.ListernerDirection;
-                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+                device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
+
+                device.AddResource(this);
             }
             catch (Exception e)
             {
@@ -62,19 +64,20 @@ namespace DrippyAL
         /// </summary>
         public void Dispose()
         {
-            if (al == null)
+            if (device == null)
             {
                 return;
             }
 
             if (alSource != 0)
             {
-                al.SourceStop(alSource);
-                al.DeleteSource(alSource);
+                device.AL.SourceStop(alSource);
+                device.AL.DeleteSource(alSource);
                 alSource = 0;
             }
 
-            al = null;
+            device.RemoveResource(this);
+            device = null;
         }
 
         /// <summary>
@@ -82,7 +85,7 @@ namespace DrippyAL
         /// </summary>
         public void Play()
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
@@ -92,7 +95,7 @@ namespace DrippyAL
                 return;
             }
 
-            al.SourcePlay(alSource);
+            device.AL.SourcePlay(alSource);
         }
 
         /// <summary>
@@ -101,7 +104,7 @@ namespace DrippyAL
         /// <param name="waveData">The wave data to be played.</param>
         public void Play(WaveData waveData)
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
@@ -113,7 +116,7 @@ namespace DrippyAL
 
             WaveData = waveData;
 
-            al.SourcePlay(alSource);
+            device.AL.SourcePlay(alSource);
         }
 
         /// <summary>
@@ -121,7 +124,7 @@ namespace DrippyAL
         /// </summary>
         public void Stop()
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
@@ -131,7 +134,7 @@ namespace DrippyAL
                 return;
             }
 
-            al.SourceStop(alSource);
+            device.AL.SourceStop(alSource);
         }
 
         /// <summary>
@@ -139,7 +142,7 @@ namespace DrippyAL
         /// </summary>
         public void Pause()
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
@@ -149,7 +152,7 @@ namespace DrippyAL
                 return;
             }
 
-            al.SourcePause(alSource);
+            device.AL.SourcePause(alSource);
         }
 
         /// <summary>
@@ -157,7 +160,7 @@ namespace DrippyAL
         /// </summary>
         public void Rewind()
         {
-            if (al == null)
+            if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
@@ -167,18 +170,18 @@ namespace DrippyAL
                 return;
             }
 
-            al.SourceRewind(alSource);
+            device.AL.SourceRewind(alSource);
         }
 
         /// <summary>
         /// Gets or sets the <see cref="DrippyAL.WaveData"/> to be played.
-        /// Set this property to null to detach the wave data from the channel so that the wave data can be safely disposed.
+        /// If set to null, the current <see cref="DrippyAL.WaveData"/> is detached from the channel.
         /// </summary>
-        public WaveData? WaveData
+        public WaveData WaveData
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -188,22 +191,22 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
-                al.SourceStop(alSource);
+                device.AL.SourceStop(alSource);
 
                 if (value == null)
                 {
                     waveData = null;
-                    al.SetSourceProperty(alSource, SourceInteger.Buffer, 0);
+                    device.AL.SetSourceProperty(alSource, SourceInteger.Buffer, 0);
                 }
                 else
                 {
                     waveData = value;
-                    al.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
+                    device.AL.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
                 }
             }
         }
@@ -216,7 +219,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -226,13 +229,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 volume = value;
-                al.SetSourceProperty(alSource, SourceFloat.Gain, volume);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Gain, volume);
             }
         }
 
@@ -244,7 +247,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -254,13 +257,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 pitch = value;
-                al.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
+                device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
             }
         }
 
@@ -271,7 +274,7 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
@@ -281,13 +284,13 @@ namespace DrippyAL
 
             set
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 position = value;
-                al.SetSourceProperty(alSource, SourceVector3.Position, position);
+                device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
             }
         }
 
@@ -298,13 +301,13 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 int value;
-                al.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
+                device.AL.GetSourceProperty(alSource, GetSourceInteger.SourceState, out value);
 
                 switch ((SourceState)value)
                 {
@@ -331,13 +334,13 @@ namespace DrippyAL
         {
             get
             {
-                if (al == null)
+                if (device == null)
                 {
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
                 float value;
-                al.GetSourceProperty(alSource, SourceFloat.SecOffset, out value);
+                device.AL.GetSourceProperty(alSource, SourceFloat.SecOffset, out value);
 
                 return TimeSpan.FromSeconds(value);
             }
