@@ -8,6 +8,17 @@ namespace DrippyALTest
     public class InitialValueTest
     {
         [Test]
+        public void AudioDevice()
+        {
+            using (var device = new AudioDevice())
+            {
+                Assert.AreEqual(new Vector3(0, 0, 0), device.ListernerPosition);
+                Assert.AreEqual(new Vector3(0, 0, -1), device.ListernerDirection);
+                Assert.AreEqual(new Vector3(0, 1, 0), device.ListernerUpVector);
+            }
+        }
+
+        [Test]
         public void Channel()
         {
             using (var device = new AudioDevice())
