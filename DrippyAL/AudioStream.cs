@@ -278,6 +278,16 @@ namespace DrippyAL
         }
 
         /// <summary>
+        /// Gets the sample rate of the audio stream.
+        /// </summary>
+        public int SampleRate => sampleRate;
+
+        /// <summary>
+        /// Gets the number of channels of the audio stream.
+        /// </summary>
+        public int ChannelCount => channelCount;
+
+        /// <summary>
         /// Gets the latency for audio processing in milliseconds.
         /// </summary>
         public int Latency => latency;
