@@ -156,13 +156,14 @@ namespace DrippyAL
                 return;
             }
 
+            device.RemoveResource(this);
+
             if (alBuffer != 0)
             {
                 device.AL.DeleteBuffer(alBuffer);
                 alBuffer = 0;
             }
 
-            device.RemoveResource(this);
             device = null;
         }
 

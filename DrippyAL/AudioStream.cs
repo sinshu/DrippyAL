@@ -157,6 +157,8 @@ namespace DrippyAL
                 return;
             }
 
+            device.RemoveResource(this);
+
             if (pollingTask != null)
             {
                 pollingCts.Cancel();
@@ -184,7 +186,6 @@ namespace DrippyAL
                 }
             }
 
-            device.RemoveResource(this);
             device = null;
         }
 

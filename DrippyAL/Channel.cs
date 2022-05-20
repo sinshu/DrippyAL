@@ -69,6 +69,8 @@ namespace DrippyAL
                 return;
             }
 
+            device.RemoveResource(this);
+
             if (alSource != 0)
             {
                 device.AL.SourceStop(alSource);
@@ -76,7 +78,6 @@ namespace DrippyAL
                 alSource = 0;
             }
 
-            device.RemoveResource(this);
             device = null;
         }
 

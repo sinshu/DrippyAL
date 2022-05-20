@@ -168,7 +168,7 @@ namespace DrippyAL
         internal void RemoveResource(WaveData waveData)
         {
             // To dispose the wave data, we must ensure that no channel is using the wave data.
-            // We therefore detach the wave data from all the channels using the wave data.
+            // We therefore detach the wave data from all the channels using it.
             foreach (var channel in channels!)
             {
                 if (channel.WaveData == waveData)
