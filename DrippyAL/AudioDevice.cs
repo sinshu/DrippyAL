@@ -27,12 +27,13 @@ namespace DrippyAL
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDevice"/> class.
         /// </summary>
-        public AudioDevice()
+        /// <param name="useSoft">If true, use OpenAL Soft for audio processing.</param>
+        public AudioDevice(bool useSoft)
         {
             try
             {
-                alc = ALContext.GetApi(true);
-                al = AL.GetApi(true);
+                alc = ALContext.GetApi(useSoft);
+                al = AL.GetApi(useSoft);
 
                 device = alc.OpenDevice("");
                 if (device == default(Device*))
@@ -73,6 +74,13 @@ namespace DrippyAL
                 Dispose();
                 ExceptionDispatchInfo.Throw(e);
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AudioDevice"/> class.
+        /// </summary>
+        public AudioDevice() : this(true)
+        {
         }
 
         /// <summary>
