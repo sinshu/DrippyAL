@@ -1,3 +1,7 @@
+# v1.1.2
+
+- Added an option to the constructor of AudioDevice to choose the OpenAL implementation.
+
 # v1.1.1
 
 - Fixed issue where a buffer might not be deleted by the Dispose method.
