@@ -23,12 +23,12 @@ public static class Examples
             .ToArray();
 
         using (var device = new AudioDevice())
+        using (var channel = new Channel(device))
+        using (var wave = new WaveData(device, sampleRate, 1, data))
         {
-            var wave = new WaveData(device, sampleRate, 1, data);
-            var channel = new Channel(device);
-
             channel.Play(wave);
 
+            // Wait until any key is pressed.
             Console.ReadKey();
         }
     }
@@ -43,12 +43,12 @@ public static class Examples
             .ToArray();
 
         using (var device = new AudioDevice())
+        using (var channel = new Channel(device))
+        using (var wave = new WaveData(device, sampleRate, 1, data))
         {
-            var wave = new WaveData(device, sampleRate, 1, data);
-            var channel = new Channel(device);
-
             channel.Play(wave);
 
+            // Wait until any key is pressed.
             Console.ReadKey();
         }
     }
@@ -59,8 +59,8 @@ public static class Examples
         var frequency = 440;
 
         using (var device = new AudioDevice())
+        using (var stream = new AudioStream(device, sampleRate, 1))
         {
-            var stream = new AudioStream(device, sampleRate, 1);
             var phase = 0F;
             var delta = 2 * MathF.PI * frequency / sampleRate;
 
@@ -73,6 +73,7 @@ public static class Examples
                 }
             });
 
+            // Wait until any key is pressed.
             Console.ReadKey();
         }
     }
@@ -87,11 +88,11 @@ public static class Examples
         sequencer.Play(midiFile, true);
 
         using (var device = new AudioDevice())
+        using (var stream = new AudioStream(device, sampleRate, 2))
         {
-            var stream = new AudioStream(device, sampleRate, 2);
-
             stream.Play(data => sequencer.RenderInterleavedInt16(data));
 
+            // Wait until any key is pressed.
             Console.ReadKey();
         }
     }
