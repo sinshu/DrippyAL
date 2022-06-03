@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MeltySynth" Version="2.2.2" />
+    <PackageReference Include="MeltySynth" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
