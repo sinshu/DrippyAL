@@ -1,3 +1,7 @@
+# v1.1.3
+
+- Fixed potential issue where task objects are not disposed.
+
 # v1.1.2
 
 - Added an option to the constructor of AudioDevice to choose the OpenAL implementation.

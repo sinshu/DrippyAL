@@ -6,13 +6,13 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>bin\Release\DrippyAL.xml</DocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Authors>Nobuaki Tanaka</Authors>
     <Description>A wrapper for OpenAL to simplify audio playback</Description>
     <PackageProjectUrl>https://github.com/sinshu/DrippyAL</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sinshu/DrippyAL</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>audio openal silk</PackageTags>
+    <PackageTags>audio;openal;silk</PackageTags>
     <PackageReleaseNotes>https://github.com/sinshu/DrippyAL/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
