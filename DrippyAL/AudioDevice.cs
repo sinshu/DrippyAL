@@ -11,8 +11,8 @@ namespace DrippyAL
     /// </summary>
     public unsafe sealed class AudioDevice : IDisposable
     {
-        private ALContext alc;
-        private AL al;
+        private ALContext? alc;
+        private AL? al;
 
         private Device* device;
         private Context* context;
@@ -20,9 +20,9 @@ namespace DrippyAL
         private Vector3 listenerPosition;
         private float[] listenerOrientation;
 
-        private List<Channel> channels;
-        private List<WaveData> waveDatas;
-        private List<AudioStream> streams;
+        private List<Channel>? channels;
+        private List<WaveData>? waveDatas;
+        private List<AudioStream>? streams;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDevice"/> class.
@@ -160,24 +160,24 @@ namespace DrippyAL
 
         internal void AddResource(Channel channel)
         {
-            channels.Add(channel);
+            channels!.Add(channel);
         }
 
         internal void RemoveResource(Channel channel)
         {
-            channels.Remove(channel);
+            channels!.Remove(channel);
         }
 
         internal void AddResource(WaveData waveData)
         {
-            waveDatas.Add(waveData);
+            waveDatas!.Add(waveData);
         }
 
         internal void RemoveResource(WaveData waveData)
         {
             // To dispose the wave data, we must ensure that no channel is using the wave data.
             // We therefore detach the wave data from all the channels using it.
-            foreach (var channel in channels)
+            foreach (var channel in channels!)
             {
                 if (channel.WaveData == waveData)
                 {
@@ -186,23 +186,36 @@ namespace DrippyAL
                 }
             }
 
-            waveDatas.Remove(waveData);
+            waveDatas!.Remove(waveData);
         }
 
         internal void AddResource(AudioStream stream)
         {
-            streams.Add(stream);
+            streams!.Add(stream);
         }
 
         internal void RemoveResource(AudioStream stream)
         {
-            streams.Remove(stream);
+            streams!.Remove(stream);
         }
 
-        internal AL AL => al;
-        internal IReadOnlyList<Channel> Channels => channels;
-        internal IReadOnlyList<WaveData> WaveDatas => waveDatas;
-        internal IReadOnlyList<AudioStream> Streams => streams;
+        internal AL AL
+        {
+            get
+            {
+                if (al == null)
+                {
+                    throw new ObjectDisposedException(nameof(AudioDevice));
+                }
+
+                return al;
+            }
+        }
+
+        // For tests.
+        internal IReadOnlyList<Channel> Channels => channels!;
+        internal IReadOnlyList<WaveData> WaveDatas => waveDatas!;
+        internal IReadOnlyList<AudioStream> Streams => streams!;
 
         /// <summary>
         /// Gets or sets the position of the listener.

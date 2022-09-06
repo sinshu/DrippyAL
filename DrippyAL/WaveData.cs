@@ -10,7 +10,7 @@ namespace DrippyAL
     /// </summary>
     public unsafe sealed class WaveData : IDisposable
     {
-        private AudioDevice device;
+        private AudioDevice? device;
         private int sampleRate;
         private int channelCount;
 

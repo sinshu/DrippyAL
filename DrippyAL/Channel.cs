@@ -11,14 +11,14 @@ namespace DrippyAL
     /// </summary>
     public sealed class Channel : IDisposable
     {
-        private AudioDevice device;
+        private AudioDevice? device;
 
         private uint alSource;
         private float volume;
         private float pitch;
         private Vector3 position;
 
-        private WaveData waveData;
+        private WaveData? waveData;
 
         /// <summary>
         /// Creates a new audio channel.
@@ -178,7 +178,7 @@ namespace DrippyAL
         /// Gets or sets the <see cref="DrippyAL.WaveData"/> to be played.
         /// If set to null, the current <see cref="DrippyAL.WaveData"/> is detached from the channel.
         /// </summary>
-        public WaveData WaveData
+        public WaveData? WaveData
         {
             get
             {

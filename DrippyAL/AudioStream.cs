@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace DrippyAL
         private static readonly int defaultLatency = 200;
         private static readonly int defaultBlockLength = 2048;
 
-        private AudioDevice device;
+        private AudioDevice? device;
         private int sampleRate;
         private int channelCount;
         private int latency;
@@ -32,9 +33,9 @@ namespace DrippyAL
         private short[] blockData;
         private uint[] alBufferQueue;
 
-        private Action<short[]> fillBlock;
-        private CancellationTokenSource pollingCts;
-        private Task pollingTask;
+        private Action<short[]>? fillBlock;
+        private CancellationTokenSource? pollingCts;
+        private Task? pollingTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioStream"/> class.
@@ -159,10 +160,10 @@ namespace DrippyAL
 
             device.RemoveResource(this);
 
-            if (pollingTask != null)
+            if (pollingCts != null)
             {
                 pollingCts.Cancel();
-                pollingTask.Wait();
+                pollingTask!.Wait();
                 pollingTask.Dispose();
                 pollingTask = null;
                 pollingCts.Dispose();
@@ -208,10 +209,10 @@ namespace DrippyAL
             }
 
             // If the previous playback is still ongoing, we have to stop it.
-            if (pollingTask != null)
+            if (pollingCts != null)
             {
                 pollingCts.Cancel();
-                pollingTask.Wait();
+                pollingTask!.Wait();
                 pollingTask.Dispose();
                 pollingCts.Dispose();
             }
@@ -242,7 +243,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(AudioStream));
             }
 
-            if (pollingTask != null)
+            if (pollingCts != null)
             {
                 pollingCts.Cancel();
             }
@@ -250,6 +251,9 @@ namespace DrippyAL
 
         private void PollingLoop(CancellationToken ct)
         {
+            Debug.Assert(device != null);
+            Debug.Assert(fillBlock != null);
+
             while (!ct.IsCancellationRequested)
             {
                 int processedCount;

@@ -15,6 +15,7 @@
     <PackageTags>audio;openal;silk</PackageTags>
     <PackageReleaseNotes>https://github.com/sinshu/DrippyAL/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
