@@ -21,13 +21,13 @@ namespace DrippyAL
         private float[] listenerOrientation;
 
         private List<Channel>? channels;
-        private List<WaveData>? waveDatas;
-        private List<AudioStream>? streams;
+        private List<AudioClip>? audioClips;
+        private List<AudioStream>? audioStreams;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDevice"/> class.
         /// </summary>
-        /// <param name="useSoft">If true, use OpenAL Soft for audio processing.</param>
+        /// <param name="useSoft">If true, OpenAL Soft will be used for audio processing.</param>
         public AudioDevice(bool useSoft)
         {
             try
@@ -66,8 +66,8 @@ namespace DrippyAL
                 }
 
                 channels = new List<Channel>();
-                waveDatas = new List<WaveData>();
-                streams = new List<AudioStream>();
+                audioClips = new List<AudioClip>();
+                audioStreams = new List<AudioStream>();
             }
             catch (Exception e)
             {
@@ -88,32 +88,32 @@ namespace DrippyAL
         /// </summary>
         public void Dispose()
         {
-            if (streams != null)
+            if (audioStreams != null)
             {
-                if (streams.Count > 0)
+                if (audioStreams.Count > 0)
                 {
-                    var copy = streams.ToArray();
-                    foreach (var stream in copy)
+                    var copy = audioStreams.ToArray();
+                    foreach (var audioStream in copy)
                     {
-                        stream.Dispose();
+                        audioStream.Dispose();
                     }
                 }
 
-                streams = null;
+                audioStreams = null;
             }
 
-            if (waveDatas != null)
+            if (audioClips != null)
             {
-                if (waveDatas.Count > 0)
+                if (audioClips.Count > 0)
                 {
-                    var copy = waveDatas.ToArray();
-                    foreach (var waveData in copy)
+                    var copy = audioClips.ToArray();
+                    foreach (var audioClip in copy)
                     {
-                        waveData.Dispose();
+                        audioClip.Dispose();
                     }
                 }
 
-                waveDatas = null;
+                audioClips = null;
             }
 
             if (channels != null)
@@ -168,35 +168,35 @@ namespace DrippyAL
             channels!.Remove(channel);
         }
 
-        internal void AddResource(WaveData waveData)
+        internal void AddResource(AudioClip audioClip)
         {
-            waveDatas!.Add(waveData);
+            audioClips!.Add(audioClip);
         }
 
-        internal void RemoveResource(WaveData waveData)
+        internal void RemoveResource(AudioClip audioClip)
         {
-            // To dispose the wave data, we must ensure that no channel is using the wave data.
-            // We therefore detach the wave data from all the channels using it.
+            // To dispose the audio clip, we must ensure that no channel is using the audio clip.
+            // We therefore detach the audio clip from all the channels using it.
             foreach (var channel in channels!)
             {
-                if (channel.WaveData == waveData)
+                if (channel.AudioClip == audioClip)
                 {
-                    // Set the WaveData property to null to detach the wave data.
-                    channel.WaveData = null;
+                    // Set the AudioClip property to null to detach the audio clip.
+                    channel.AudioClip = null;
                 }
             }
 
-            waveDatas!.Remove(waveData);
+            audioClips!.Remove(audioClip);
         }
 
-        internal void AddResource(AudioStream stream)
+        internal void AddResource(AudioStream audioStream)
         {
-            streams!.Add(stream);
+            audioStreams!.Add(audioStream);
         }
 
-        internal void RemoveResource(AudioStream stream)
+        internal void RemoveResource(AudioStream audioStream)
         {
-            streams!.Remove(stream);
+            audioStreams!.Remove(audioStream);
         }
 
         internal AL AL
@@ -214,8 +214,8 @@ namespace DrippyAL
 
         // For tests.
         internal IReadOnlyList<Channel> Channels => channels!;
-        internal IReadOnlyList<WaveData> WaveDatas => waveDatas!;
-        internal IReadOnlyList<AudioStream> Streams => streams!;
+        internal IReadOnlyList<AudioClip> AudioClips => audioClips!;
+        internal IReadOnlyList<AudioStream> AudioStreams => audioStreams!;
 
         /// <summary>
         /// Gets or sets the position of the listener.

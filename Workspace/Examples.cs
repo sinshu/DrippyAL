@@ -24,9 +24,9 @@ public static class Examples
 
         using (var device = new AudioDevice())
         using (var channel = new Channel(device))
-        using (var wave = new WaveData(device, sampleRate, 1, data))
+        using (var clip = new AudioClip(device, sampleRate, 1, data))
         {
-            channel.Play(wave);
+            channel.Play(clip);
 
             // Wait until any key is pressed.
             Console.ReadKey();
@@ -44,9 +44,9 @@ public static class Examples
 
         using (var device = new AudioDevice())
         using (var channel = new Channel(device))
-        using (var wave = new WaveData(device, sampleRate, 1, data))
+        using (var clip = new AudioClip(device, sampleRate, 1, data))
         {
-            channel.Play(wave);
+            channel.Play(clip);
 
             // Wait until any key is pressed.
             Console.ReadKey();

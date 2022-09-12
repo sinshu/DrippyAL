@@ -32,31 +32,31 @@ namespace DrippyALTest
         }
 
         [Test]
-        public void WaveData()
+        public void AudioClip()
         {
             using (var device = new AudioDevice())
             {
-                var waveData = new WaveData(device, 44100, 1, new short[44100]);
-                Assert.AreEqual(44100, waveData.SampleRate);
-                Assert.AreEqual(1, waveData.ChannelCount);
-                Assert.AreEqual(1.0, waveData.Duration.TotalSeconds, 1.0E-6);
+                var audioClip = new AudioClip(device, 44100, 1, new short[44100]);
+                Assert.AreEqual(44100, audioClip.SampleRate);
+                Assert.AreEqual(1, audioClip.ChannelCount);
+                Assert.AreEqual(1.0, audioClip.Duration.TotalSeconds, 1.0E-6);
             }
         }
 
         [Test]
-        public void Stream()
+        public void AudioStream()
         {
             using (var device = new AudioDevice())
             {
-                var stream = new AudioStream(device, 44100, 2, 500, 4096);
-                Assert.AreEqual(44100, stream.SampleRate);
-                Assert.AreEqual(2, stream.ChannelCount);
-                Assert.AreEqual(500, stream.Latency);
-                Assert.AreEqual(4096, stream.BlockLength);
-                Assert.AreEqual(1F, stream.Volume);
-                Assert.AreEqual(1F, stream.Pitch);
-                Assert.AreEqual(new Vector3(0, 0, 1), stream.Position);
-                Assert.AreEqual(PlaybackState.Stopped, stream.State);
+                var audioStream = new AudioStream(device, 44100, 2, 500, 4096);
+                Assert.AreEqual(44100, audioStream.SampleRate);
+                Assert.AreEqual(2, audioStream.ChannelCount);
+                Assert.AreEqual(500, audioStream.Latency);
+                Assert.AreEqual(4096, audioStream.BlockLength);
+                Assert.AreEqual(1F, audioStream.Volume);
+                Assert.AreEqual(1F, audioStream.Pitch);
+                Assert.AreEqual(new Vector3(0, 0, 1), audioStream.Position);
+                Assert.AreEqual(PlaybackState.Stopped, audioStream.State);
             }
         }
     }

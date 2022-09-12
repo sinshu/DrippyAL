@@ -32,52 +32,52 @@ namespace DrippyALTest
         }
 
         [Test]
-        public void WaveData()
+        public void AudioClip()
         {
             using (var device = new AudioDevice())
             {
-                WaveData waveData1;
-                WaveData waveData2;
-                WaveData waveData3;
+                AudioClip audioClip1;
+                AudioClip audioClip2;
+                AudioClip audioClip3;
 
-                Assert.AreEqual(0, device.WaveDatas.Count);
-                waveData1 = new WaveData(device, 44100, 2, new short[2]);
-                Assert.AreEqual(1, device.WaveDatas.Count);
-                waveData2 = new WaveData(device, 44100, 2, new short[2]);
-                Assert.AreEqual(2, device.WaveDatas.Count);
-                waveData1.Dispose();
-                Assert.AreEqual(1, device.WaveDatas.Count);
-                waveData3 = new WaveData(device, 44100, 2, new short[2]);
-                Assert.AreEqual(2, device.WaveDatas.Count);
-                waveData3.Dispose();
-                Assert.AreEqual(1, device.WaveDatas.Count);
-                waveData2.Dispose();
-                Assert.AreEqual(0, device.WaveDatas.Count);
+                Assert.AreEqual(0, device.AudioClips.Count);
+                audioClip1 = new AudioClip(device, 44100, 2, new short[2]);
+                Assert.AreEqual(1, device.AudioClips.Count);
+                audioClip2 = new AudioClip(device, 44100, 2, new short[2]);
+                Assert.AreEqual(2, device.AudioClips.Count);
+                audioClip1.Dispose();
+                Assert.AreEqual(1, device.AudioClips.Count);
+                audioClip3 = new AudioClip(device, 44100, 2, new short[2]);
+                Assert.AreEqual(2, device.AudioClips.Count);
+                audioClip3.Dispose();
+                Assert.AreEqual(1, device.AudioClips.Count);
+                audioClip2.Dispose();
+                Assert.AreEqual(0, device.AudioClips.Count);
             }
         }
 
         [Test]
-        public void Stream()
+        public void AudioStream()
         {
             using (var device = new AudioDevice())
             {
-                AudioStream stream1;
-                AudioStream stream2;
-                AudioStream stream3;
+                AudioStream audioStream1;
+                AudioStream audioStream2;
+                AudioStream audioStream3;
 
-                Assert.AreEqual(0, device.Streams.Count);
-                stream1 = new AudioStream(device, 44100, 2);
-                Assert.AreEqual(1, device.Streams.Count);
-                stream2 = new AudioStream(device, 44100, 2);
-                Assert.AreEqual(2, device.Streams.Count);
-                stream1.Dispose();
-                Assert.AreEqual(1, device.Streams.Count);
-                stream3 = new AudioStream(device, 44100, 2);
-                Assert.AreEqual(2, device.Streams.Count);
-                stream3.Dispose();
-                Assert.AreEqual(1, device.Streams.Count);
-                stream2.Dispose();
-                Assert.AreEqual(0, device.Streams.Count);
+                Assert.AreEqual(0, device.AudioStreams.Count);
+                audioStream1 = new AudioStream(device, 44100, 2);
+                Assert.AreEqual(1, device.AudioStreams.Count);
+                audioStream2 = new AudioStream(device, 44100, 2);
+                Assert.AreEqual(2, device.AudioStreams.Count);
+                audioStream1.Dispose();
+                Assert.AreEqual(1, device.AudioStreams.Count);
+                audioStream3 = new AudioStream(device, 44100, 2);
+                Assert.AreEqual(2, device.AudioStreams.Count);
+                audioStream3.Dispose();
+                Assert.AreEqual(1, device.AudioStreams.Count);
+                audioStream2.Dispose();
+                Assert.AreEqual(0, device.AudioStreams.Count);
             }
         }
     }

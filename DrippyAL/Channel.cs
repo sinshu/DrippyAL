@@ -7,7 +7,7 @@ using Silk.NET.OpenAL;
 namespace DrippyAL
 {
     /// <summary>
-    /// Represents an audio channel to play wave data.
+    /// Represents an audio channel to play audio clip.
     /// </summary>
     public sealed class Channel : IDisposable
     {
@@ -18,7 +18,7 @@ namespace DrippyAL
         private float pitch;
         private Vector3 position;
 
-        private WaveData? waveData;
+        private AudioClip? audioClip;
 
         /// <summary>
         /// Creates a new audio channel.
@@ -82,7 +82,7 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Plays the wave data which is currently attached to the channel.
+        /// Plays the audio clip which is currently attached to the channel.
         /// </summary>
         public void Play()
         {
@@ -91,7 +91,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (waveData == null)
+            if (audioClip == null)
             {
                 return;
             }
@@ -100,22 +100,22 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Plays the specified wave data.
+        /// Plays the specified audio clip.
         /// </summary>
-        /// <param name="waveData">The wave data to be played.</param>
-        public void Play(WaveData waveData)
+        /// <param name="audioClip">The audio clip to be played.</param>
+        public void Play(AudioClip audioClip)
         {
             if (device == null)
             {
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (waveData == null)
+            if (audioClip == null)
             {
-                throw new ArgumentNullException(nameof(waveData));
+                throw new ArgumentNullException(nameof(audioClip));
             }
 
-            WaveData = waveData;
+            AudioClip = audioClip;
 
             device.AL.SourcePlay(alSource);
         }
@@ -130,7 +130,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (waveData == null)
+            if (audioClip == null)
             {
                 return;
             }
@@ -148,7 +148,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (waveData == null)
+            if (audioClip == null)
             {
                 return;
             }
@@ -166,7 +166,7 @@ namespace DrippyAL
                 throw new ObjectDisposedException(nameof(Channel));
             }
 
-            if (waveData == null)
+            if (audioClip == null)
             {
                 return;
             }
@@ -175,10 +175,10 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="DrippyAL.WaveData"/> to be played.
-        /// If set to null, the current <see cref="DrippyAL.WaveData"/> is detached from the channel.
+        /// Gets or sets the <see cref="DrippyAL.AudioClip"/> to be played.
+        /// If set to null, the current <see cref="DrippyAL.AudioClip"/> is detached from the channel.
         /// </summary>
-        public WaveData? WaveData
+        public AudioClip? AudioClip
         {
             get
             {
@@ -187,7 +187,7 @@ namespace DrippyAL
                     throw new ObjectDisposedException(nameof(Channel));
                 }
 
-                return waveData;
+                return audioClip;
             }
 
             set
@@ -201,13 +201,13 @@ namespace DrippyAL
 
                 if (value == null)
                 {
-                    waveData = null;
+                    audioClip = null;
                     device.AL.SetSourceProperty(alSource, SourceInteger.Buffer, 0);
                 }
                 else
                 {
-                    waveData = value;
-                    device.AL.SetSourceProperty(alSource, SourceInteger.Buffer, waveData.AlBuffer);
+                    audioClip = value;
+                    device.AL.SetSourceProperty(alSource, SourceInteger.Buffer, audioClip.AlBuffer);
                 }
             }
         }
@@ -241,7 +241,7 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Gets or sets the pitch.
+        /// Gets or sets the pitch to play the audio clip.
         /// The playback frequency will be multiplied by this value.
         /// </summary>
         public float Pitch
@@ -329,7 +329,7 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Gets the current playing offset of the wave data.
+        /// Gets the current playing offset of the audio clip.
         /// </summary>
         public TimeSpan PlayingOffset
         {

@@ -5,10 +5,10 @@ using Silk.NET.OpenAL;
 namespace DrippyAL
 {
     /// <summary>
-    /// Represents an instance of wave data for playback.
-    /// To play a sound from the wave data, use the <see cref="Channel.Play(WaveData)"/> method.
+    /// Represents an audio clip for playback.
+    /// To play a sound from the audio clip, use the <see cref="Channel.Play(AudioClip)"/> method.
     /// </summary>
-    public unsafe sealed class WaveData : IDisposable
+    public unsafe sealed class AudioClip : IDisposable
     {
         private AudioDevice? device;
         private int sampleRate;
@@ -19,13 +19,13 @@ namespace DrippyAL
         private TimeSpan duration;
 
         /// <summary>
-        /// Creates a new instance of wave data from the 16-bit PCM data.
+        /// Creates a new instance of audio clip from the 16-bit PCM data.
         /// </summary>
-        /// <param name="device">The <see cref="AudioDevice"/> to play the wave data.</param>
-        /// <param name="sampleRate">The sample rate of the wave data.</param>
-        /// <param name="channelCount">The number of channels of the wave data. This value must be 1 or 2.</param>
-        /// <param name="data">The wave data for playback. The format must be 16-bit PCM.</param>
-        public WaveData(AudioDevice device, int sampleRate, int channelCount, Span<short> data)
+        /// <param name="device">The <see cref="AudioDevice"/> to play the audio clip.</param>
+        /// <param name="sampleRate">The sample rate of the audio clip.</param>
+        /// <param name="channelCount">The number of channels of the audio clip. This value must be 1 or 2.</param>
+        /// <param name="data">The wave data for the audio clip. The format must be 16-bit PCM.</param>
+        public AudioClip(AudioDevice device, int sampleRate, int channelCount, Span<short> data)
         {
             try
             {
@@ -83,13 +83,13 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Creates a new instance of wave data from the 8-bit PCM data.
+        /// Creates a new instance of audio clip from the 8-bit PCM data.
         /// </summary>
-        /// <param name="device">The <see cref="AudioDevice"/> to play the wave data.</param>
-        /// <param name="sampleRate">The sample rate of the wave data.</param>
-        /// <param name="channelCount">The number of channels of the wave data. This value must be 1 or 2.</param>
-        /// <param name="data">The wave data for playback. The format must be 8-bit PCM.</param>
-        public WaveData(AudioDevice device, int sampleRate, int channelCount, Span<byte> data)
+        /// <param name="device">The <see cref="AudioDevice"/> to play the audio clip.</param>
+        /// <param name="sampleRate">The sample rate of the audio clip.</param>
+        /// <param name="channelCount">The number of channels of the audio clip. This value must be 1 or 2.</param>
+        /// <param name="data">The wave data for the audio clip. The format must be 8-bit PCM.</param>
+        public AudioClip(AudioDevice device, int sampleRate, int channelCount, Span<byte> data)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Disposes the resources held by the <see cref="WaveData"/>.
+        /// Disposes the resources held by the <see cref="AudioClip"/>.
         /// </summary>
         public void Dispose()
         {
@@ -170,17 +170,17 @@ namespace DrippyAL
         internal uint AlBuffer => alBuffer;
 
         /// <summary>
-        /// Gets the sample rate of the wave data.
+        /// Gets the sample rate of the audio clip.
         /// </summary>
         public int SampleRate => sampleRate;
 
         /// <summary>
-        /// Gets the number of channels of the wave data.
+        /// Gets the number of channels of the audio clip.
         /// </summary>
         public int ChannelCount => channelCount;
 
         /// <summary>
-        /// Gets the duration of the wave data.
+        /// Gets the duration of the audio clip.
         /// </summary>
         public TimeSpan Duration => duration;
     }
