@@ -1,3 +1,8 @@
+# v2.0.0
+
+- Changed class name from `WaveData` to `AudioClip`.
+- Enabled Nullable-analysis.
+
 # v1.1.3
 
 - Fixed potential issue where task objects are not disposed.
