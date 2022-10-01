@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Linq;
+using System.Runtime.InteropServices;
 using MeltySynth;
+using NAudio.Wave;
 using DrippyAL;
+using System.Numerics;
 
 public static class Examples
 {
@@ -10,6 +12,7 @@ public static class Examples
         OneSecSine();
         OneSecSine8bit();
         StreamingSine();
+        PlayWaveFile();
         MidiSynthesis();
     }
 
@@ -72,6 +75,30 @@ public static class Examples
                     phase = (phase + delta) % (2 * MathF.PI);
                 }
             });
+
+            // Wait until any key is pressed.
+            Console.ReadKey();
+        }
+    }
+
+    public static void PlayWaveFile()
+    {
+        int sampleRate;
+        int channelCount;
+        short[] data;
+        using (var reader = new WaveFileReader(@"C:\Windows\Media\tada.wav"))
+        {
+            sampleRate = reader.WaveFormat.SampleRate;
+            channelCount = reader.WaveFormat.Channels;
+            data = new short[reader.Length / 2];
+            reader.Read(MemoryMarshal.Cast<short, byte>(data));
+        }
+
+        using (var device = new AudioDevice())
+        using (var channel = new Channel(device))
+        using (var clip = new AudioClip(device, sampleRate, channelCount, data))
+        {
+            channel.Play(clip);
 
             // Wait until any key is pressed.
             Console.ReadKey();

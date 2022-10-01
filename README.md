@@ -49,13 +49,38 @@ using (var stream = new AudioStream(device, sampleRate, 1))
 }
 ```
 
+## Play wave file with [NAudio](https://github.com/naudio/NAudio)
+
+```cs
+int sampleRate;
+int channelCount;
+short[] data;
+using (var reader = new WaveFileReader("tada.wav"))
+{
+    sampleRate = reader.WaveFormat.SampleRate;
+    channelCount = reader.WaveFormat.Channels;
+    data = new short[reader.Length / 2];
+    reader.Read(MemoryMarshal.Cast<short, byte>(data));
+}
+
+using (var device = new AudioDevice())
+using (var channel = new Channel(device))
+using (var clip = new AudioClip(device, sampleRate, channelCount, data))
+{
+    channel.Play(clip);
+
+    // Wait until any key is pressed.
+    Console.ReadKey();
+}
+```
+
 ## MIDI synthesis with [MeltySynth](https://github.com/sinshu/meltysynth/)
 
 ```cs
 var sampleRate = 44100;
 var synthesizer = new Synthesizer("TimGM6mb.sf2", sampleRate);
 var sequencer = new MidiFileSequencer(synthesizer);
-var midiFile = new MidiFile(@"C:\Windows\Media\flourish.mid");
+var midiFile = new MidiFile("flourish.mid");
 
 sequencer.Play(midiFile, true);
 
