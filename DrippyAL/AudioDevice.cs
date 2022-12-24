@@ -20,7 +20,7 @@ namespace DrippyAL
         private Vector3 listenerPosition;
         private float[] listenerOrientation;
 
-        private List<Channel>? channels;
+        private List<AudioChannel>? channels;
         private List<AudioClip>? audioClips;
         private List<AudioStream>? audioStreams;
 
@@ -65,7 +65,7 @@ namespace DrippyAL
                     al.SetListenerProperty(ListenerFloatArray.Orientation, p);
                 }
 
-                channels = new List<Channel>();
+                channels = new List<AudioChannel>();
                 audioClips = new List<AudioClip>();
                 audioStreams = new List<AudioStream>();
             }
@@ -158,12 +158,12 @@ namespace DrippyAL
             }
         }
 
-        internal void AddResource(Channel channel)
+        internal void AddResource(AudioChannel channel)
         {
             channels!.Add(channel);
         }
 
-        internal void RemoveResource(Channel channel)
+        internal void RemoveResource(AudioChannel channel)
         {
             channels!.Remove(channel);
         }
@@ -213,7 +213,7 @@ namespace DrippyAL
         }
 
         // For tests.
-        internal IReadOnlyList<Channel> Channels => channels!;
+        internal IReadOnlyList<AudioChannel> Channels => channels!;
         internal IReadOnlyList<AudioClip> AudioClips => audioClips!;
         internal IReadOnlyList<AudioStream> AudioStreams => audioStreams!;
 

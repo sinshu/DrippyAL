@@ -9,9 +9,9 @@ namespace DrippyALTest
         [Test]
         public void AutoDispose()
         {
-            Channel channel1;
-            Channel channel2;
-            Channel channel3;
+            AudioChannel channel1;
+            AudioChannel channel2;
+            AudioChannel channel3;
 
             AudioClip audioClip1;
             AudioClip audioClip2;
@@ -23,9 +23,9 @@ namespace DrippyALTest
 
             using (var device = new AudioDevice())
             {
-                channel1 = new Channel(device);
-                channel2 = new Channel(device);
-                channel3 = new Channel(device);
+                channel1 = new AudioChannel(device);
+                channel2 = new AudioChannel(device);
+                channel3 = new AudioChannel(device);
 
                 audioClip1 = new AudioClip(device, 44100, 2, new short[2]);
                 audioClip2 = new AudioClip(device, 44100, 2, new short[2]);
@@ -60,18 +60,18 @@ namespace DrippyALTest
         [Test]
         public void DetachWaveDataFromCorrespondingChannels()
         {
-            Channel channel1;
-            Channel channel2;
-            Channel channel3;
+            AudioChannel channel1;
+            AudioChannel channel2;
+            AudioChannel channel3;
 
             AudioClip audioClip1;
             AudioClip audioClip2;
 
             using (var device = new AudioDevice())
             {
-                channel1 = new Channel(device);
-                channel2 = new Channel(device);
-                channel3 = new Channel(device);
+                channel1 = new AudioChannel(device);
+                channel2 = new AudioChannel(device);
+                channel3 = new AudioChannel(device);
 
                 audioClip1 = new AudioClip(device, 44100, 2, new short[2]);
                 audioClip2 = new AudioClip(device, 44100, 2, new short[2]);

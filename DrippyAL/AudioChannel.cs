@@ -9,7 +9,7 @@ namespace DrippyAL
     /// <summary>
     /// Represents an audio channel to play audio clip.
     /// </summary>
-    public sealed class Channel : IDisposable
+    public sealed class AudioChannel : IDisposable
     {
         private AudioDevice? device;
 
@@ -24,7 +24,7 @@ namespace DrippyAL
         /// Creates a new audio channel.
         /// </summary>
         /// <param name="device">The <see cref="AudioDevice"/> for which the new channel is to be created.</param>
-        public Channel(AudioDevice device)
+        public AudioChannel(AudioDevice device)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace DrippyAL
         }
 
         /// <summary>
-        /// Disposes the resources held by the <see cref="Channel"/>.
+        /// Disposes the resources held by the <see cref="AudioChannel"/>.
         /// </summary>
         public void Dispose()
         {
@@ -88,7 +88,7 @@ namespace DrippyAL
         {
             if (device == null)
             {
-                throw new ObjectDisposedException(nameof(Channel));
+                throw new ObjectDisposedException(nameof(AudioChannel));
             }
 
             if (audioClip == null)
@@ -107,7 +107,7 @@ namespace DrippyAL
         {
             if (device == null)
             {
-                throw new ObjectDisposedException(nameof(Channel));
+                throw new ObjectDisposedException(nameof(AudioChannel));
             }
 
             if (audioClip == null)
@@ -127,7 +127,7 @@ namespace DrippyAL
         {
             if (device == null)
             {
-                throw new ObjectDisposedException(nameof(Channel));
+                throw new ObjectDisposedException(nameof(AudioChannel));
             }
 
             if (audioClip == null)
@@ -145,7 +145,7 @@ namespace DrippyAL
         {
             if (device == null)
             {
-                throw new ObjectDisposedException(nameof(Channel));
+                throw new ObjectDisposedException(nameof(AudioChannel));
             }
 
             if (audioClip == null)
@@ -163,7 +163,7 @@ namespace DrippyAL
         {
             if (device == null)
             {
-                throw new ObjectDisposedException(nameof(Channel));
+                throw new ObjectDisposedException(nameof(AudioChannel));
             }
 
             if (audioClip == null)
@@ -184,7 +184,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 return audioClip;
@@ -194,7 +194,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 device.AL.SourceStop(alSource);
@@ -222,7 +222,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 return volume;
@@ -232,7 +232,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 volume = value;
@@ -250,7 +250,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 return pitch;
@@ -260,7 +260,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 pitch = value;
@@ -277,7 +277,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 return position;
@@ -287,7 +287,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 position = value;
@@ -304,7 +304,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 int value;
@@ -337,7 +337,7 @@ namespace DrippyAL
             {
                 if (device == null)
                 {
-                    throw new ObjectDisposedException(nameof(Channel));
+                    throw new ObjectDisposedException(nameof(AudioChannel));
                 }
 
                 float value;

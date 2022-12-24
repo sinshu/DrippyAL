@@ -26,7 +26,7 @@ public static class Examples
             .ToArray();
 
         using (var device = new AudioDevice())
-        using (var channel = new Channel(device))
+        using (var channel = new AudioChannel(device))
         using (var clip = new AudioClip(device, sampleRate, 1, data))
         {
             channel.Play(clip);
@@ -46,7 +46,7 @@ public static class Examples
             .ToArray();
 
         using (var device = new AudioDevice())
-        using (var channel = new Channel(device))
+        using (var channel = new AudioChannel(device))
         using (var clip = new AudioClip(device, sampleRate, 1, data))
         {
             channel.Play(clip);
@@ -95,7 +95,7 @@ public static class Examples
         }
 
         using (var device = new AudioDevice())
-        using (var channel = new Channel(device))
+        using (var channel = new AudioChannel(device))
         using (var clip = new AudioClip(device, sampleRate, channelCount, data))
         {
             channel.Play(clip);

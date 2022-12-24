@@ -19,11 +19,11 @@ namespace DrippyALTest
         }
 
         [Test]
-        public void Channel()
+        public void AudioChannel()
         {
             using (var device = new AudioDevice())
             {
-                var channel = new Channel(device);
+                var channel = new AudioChannel(device);
                 Assert.AreEqual(1F, channel.Volume);
                 Assert.AreEqual(1F, channel.Pitch);
                 Assert.AreEqual(new Vector3(0, 0, 1), channel.Position);

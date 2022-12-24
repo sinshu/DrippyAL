@@ -6,7 +6,7 @@ namespace DrippyAL
 {
     /// <summary>
     /// Represents an audio clip for playback.
-    /// To play a sound from the audio clip, use the <see cref="Channel.Play(AudioClip)"/> method.
+    /// To play a sound from the audio clip, use the <see cref="AudioChannel.Play(AudioClip)"/> method.
     /// </summary>
     public unsafe sealed class AudioClip : IDisposable
     {

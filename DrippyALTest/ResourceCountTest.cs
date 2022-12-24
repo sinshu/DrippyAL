@@ -7,22 +7,22 @@ namespace DrippyALTest
     public class ResourceCountTest
     {
         [Test]
-        public void Channel()
+        public void AudioChannel()
         {
             using (var device = new AudioDevice())
             {
-                Channel channel1;
-                Channel channel2;
-                Channel channel3;
+                AudioChannel channel1;
+                AudioChannel channel2;
+                AudioChannel channel3;
 
                 Assert.AreEqual(0, device.Channels.Count);
-                channel1 = new Channel(device);
+                channel1 = new AudioChannel(device);
                 Assert.AreEqual(1, device.Channels.Count);
-                channel2 = new Channel(device);
+                channel2 = new AudioChannel(device);
                 Assert.AreEqual(2, device.Channels.Count);
                 channel1.Dispose();
                 Assert.AreEqual(1, device.Channels.Count);
-                channel3 = new Channel(device);
+                channel3 = new AudioChannel(device);
                 Assert.AreEqual(2, device.Channels.Count);
                 channel3.Dispose();
                 Assert.AreEqual(1, device.Channels.Count);
