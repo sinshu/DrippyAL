@@ -1,3 +1,7 @@
+# v2.1.0
+
+- Changed class name from `Channel` to `AudioChannel`.
+
 # v2.0.0
 
 - Changed class name from `WaveData` to `AudioClip`.
