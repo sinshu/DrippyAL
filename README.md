@@ -2,6 +2,20 @@
 
 DrippyAL is a wrapper for OpenAL to simplify audio playback.
 
+## Installation
+
+[The NuGet package](https://www.nuget.org/packages/DrippyAL) is available:
+
+```ps1
+Install-Package DrippyAL
+```
+
+All the classes are in the `DrippyAL` namespace:
+
+```cs
+using DrippyAL;
+```
+
 ## Play 1 sec sine wave
 
 ```cs
@@ -13,7 +27,7 @@ var data = Enumerable
     .ToArray();
 
 using (var device = new AudioDevice())
-using (var channel = new Channel(device))
+using (var channel = new AudioChannel(device))
 using (var clip = new AudioClip(device, sampleRate, 1, data))
 {
     channel.Play(clip);
@@ -64,7 +78,7 @@ using (var reader = new WaveFileReader("tada.wav"))
 }
 
 using (var device = new AudioDevice())
-using (var channel = new Channel(device))
+using (var channel = new AudioChannel(device))
 using (var clip = new AudioClip(device, sampleRate, channelCount, data))
 {
     channel.Play(clip);
