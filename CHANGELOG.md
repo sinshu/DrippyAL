@@ -1,3 +1,7 @@
+# v2.1.1
+
+- Added an option to make the source position relative to the listener.
+
 # v2.1.0
 
 - Changed class name from `Channel` to `AudioChannel`.
