@@ -26,7 +26,7 @@ namespace DrippyALTest
                 var channel = new AudioChannel(device);
                 Assert.AreEqual(1F, channel.Volume);
                 Assert.AreEqual(1F, channel.Pitch);
-                Assert.AreEqual(new Vector3(0, 0, 1), channel.Position);
+                Assert.AreEqual(new Vector3(0, 0, -1), channel.Position);
                 Assert.AreEqual(PlaybackState.Stopped, channel.State);
             }
         }
@@ -48,14 +48,14 @@ namespace DrippyALTest
         {
             using (var device = new AudioDevice())
             {
-                var audioStream = new AudioStream(device, 44100, 2, 500, 4096);
+                var audioStream = new AudioStream(device, 44100, 2, true, 500, 4096);
                 Assert.AreEqual(44100, audioStream.SampleRate);
                 Assert.AreEqual(2, audioStream.ChannelCount);
                 Assert.AreEqual(500, audioStream.Latency);
                 Assert.AreEqual(4096, audioStream.BlockLength);
                 Assert.AreEqual(1F, audioStream.Volume);
                 Assert.AreEqual(1F, audioStream.Pitch);
-                Assert.AreEqual(new Vector3(0, 0, 1), audioStream.Position);
+                Assert.AreEqual(new Vector3(0, 0, -1), audioStream.Position);
                 Assert.AreEqual(PlaybackState.Stopped, audioStream.State);
             }
         }

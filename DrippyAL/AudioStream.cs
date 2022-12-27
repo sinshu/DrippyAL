@@ -43,9 +43,10 @@ namespace DrippyAL
         /// <param name="device">The <see cref="AudioDevice"/> to play the audio stream.</param>
         /// <param name="sampleRate">The sample rate of the audio stream.</param>
         /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
+        /// <param name="relative">If true, the position of the source will be interpreted relative to the listener position.</param>
         /// <param name="latency">The desired latency for audio processing in milliseconds.</param>
         /// <param name="blockLength">The desired block length for audio processing in sample frames.</param>
-        public AudioStream(AudioDevice device, int sampleRate, int channelCount, int latency, int blockLength)
+        public AudioStream(AudioDevice device, int sampleRate, int channelCount, bool relative, int latency, int blockLength)
         {
             try
             {
@@ -110,7 +111,8 @@ namespace DrippyAL
                 pitch = 1F;
                 device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
 
-                position = device.ListernerPosition - device.ListernerDirection;
+                position = new Vector3(0F, 0F, -1F);
+                device.AL.SetSourceProperty(alSource, SourceBoolean.SourceRelative, relative);
                 device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
 
                 blockData = new short[channelCount * blockLength];
@@ -132,7 +134,7 @@ namespace DrippyAL
         /// <param name="sampleRate">The sample rate of the audio stream.</param>
         /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
         public AudioStream(AudioDevice device, int sampleRate, int channelCount)
-            : this(device, sampleRate, channelCount, defaultLatency, defaultBlockLength)
+            : this(device, sampleRate, channelCount, true, defaultLatency, defaultBlockLength)
         {
         }
 
@@ -142,9 +144,22 @@ namespace DrippyAL
         /// <param name="device">The <see cref="AudioDevice"/> to play the audio stream.</param>
         /// <param name="sampleRate">The sample rate of the audio stream.</param>
         /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
+        /// <param name="relative">If true, the position of the source will be interpreted relative to the listener position.</param>
+        public AudioStream(AudioDevice device, int sampleRate, int channelCount, bool relative)
+            : this(device, sampleRate, channelCount, relative, defaultLatency, defaultBlockLength)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AudioStream"/> class.
+        /// </summary>
+        /// <param name="device">The <see cref="AudioDevice"/> to play the audio stream.</param>
+        /// <param name="sampleRate">The sample rate of the audio stream.</param>
+        /// <param name="channelCount">The number of channels of the audio stream. This value must be 1 or 2.</param>
+        /// <param name="relative">If true, the position of the source will be interpreted relative to the listener position.</param>
         /// <param name="latency">The desired latency for audio processing in milliseconds.</param>
-        public AudioStream(AudioDevice device, int sampleRate, int channelCount, int latency)
-            : this(device, sampleRate, channelCount, latency, defaultBlockLength)
+        public AudioStream(AudioDevice device, int sampleRate, int channelCount, bool relative, int latency)
+            : this(device, sampleRate, channelCount, relative, latency, defaultBlockLength)
         {
         }
 

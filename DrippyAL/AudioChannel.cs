@@ -24,7 +24,8 @@ namespace DrippyAL
         /// Creates a new audio channel.
         /// </summary>
         /// <param name="device">The <see cref="AudioDevice"/> for which the new channel is to be created.</param>
-        public AudioChannel(AudioDevice device)
+        /// <param name="relative">If true, the position of the source will be interpreted relative to the listener position.</param>
+        public AudioChannel(AudioDevice device, bool relative)
         {
             try
             {
@@ -47,7 +48,8 @@ namespace DrippyAL
                 pitch = 1F;
                 device.AL.SetSourceProperty(alSource, SourceFloat.Pitch, pitch);
 
-                position = device.ListernerPosition - device.ListernerDirection;
+                position = new Vector3(0F, 0F, -1F);
+                device.AL.SetSourceProperty(alSource, SourceBoolean.SourceRelative, relative);
                 device.AL.SetSourceProperty(alSource, SourceVector3.Position, position);
 
                 device.AddResource(this);
@@ -57,6 +59,14 @@ namespace DrippyAL
                 Dispose();
                 ExceptionDispatchInfo.Throw(e);
             }
+        }
+
+        /// <summary>
+        /// Creates a new audio channel.
+        /// </summary>
+        /// <param name="device">The <see cref="AudioDevice"/> for which the new channel is to be created.</param>
+        public AudioChannel(AudioDevice device) : this(device, false)
+        {
         }
 
         /// <summary>
