@@ -1,3 +1,7 @@
+# v2.1.2
+
+- Updated Silk.NET to 2.17.1.
+
 # v2.1.1
 
 - Added an option to make the source position relative to the listener.

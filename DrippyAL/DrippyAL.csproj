@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>bin\Release\DrippyAL.xml</DocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <Authors>Nobuaki Tanaka</Authors>
     <Description>A wrapper for OpenAL to simplify audio playback</Description>
     <PackageProjectUrl>https://github.com/sinshu/DrippyAL</PackageProjectUrl>
@@ -19,8 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.OpenAL" Version="2.16.0" />
-    <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.1" />
+    <PackageReference Include="Silk.NET.OpenAL" Version="2.17.1" />
+    <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.2" />
   </ItemGroup>
 
 </Project>
