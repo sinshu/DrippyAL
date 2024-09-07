@@ -40,7 +40,7 @@ namespace DrippyALTest
                 audioStream3.Dispose();
 
                 Assert.Catch(() => channel1.Play());
-                Assert.AreEqual(audioClip2.AlBuffer, 0);
+                Assert.That(audioClip2.AlBuffer, Is.EqualTo(0));
                 Assert.Catch(() => audioStream3.Play(block => Array.Clear(block)));
             }
 
@@ -48,9 +48,9 @@ namespace DrippyALTest
             Assert.Catch(() => channel2.Play());
             Assert.Catch(() => channel3.Play());
 
-            Assert.AreEqual(audioClip1.AlBuffer, 0);
-            Assert.AreEqual(audioClip2.AlBuffer, 0);
-            Assert.AreEqual(audioClip3.AlBuffer, 0);
+            Assert.That(audioClip1.AlBuffer, Is.EqualTo(0));
+            Assert.That(audioClip2.AlBuffer, Is.EqualTo(0));
+            Assert.That(audioClip3.AlBuffer, Is.EqualTo(0));
 
             Assert.Catch(() => audioStream1.Play(block => Array.Clear(block)));
             Assert.Catch(() => audioStream2.Play(block => Array.Clear(block)));
@@ -80,15 +80,15 @@ namespace DrippyALTest
                 channel2.AudioClip = audioClip2;
                 channel3.AudioClip = audioClip2;
 
-                Assert.AreEqual(channel1.AudioClip, audioClip1);
+                Assert.That(channel1.AudioClip, Is.EqualTo(audioClip1));
                 audioClip1.Dispose();
-                Assert.AreEqual(channel1.AudioClip, null);
+                Assert.That(channel1.AudioClip, Is.EqualTo(null));
 
-                Assert.AreEqual(channel2.AudioClip, audioClip2);
-                Assert.AreEqual(channel3.AudioClip, audioClip2);
+                Assert.That(channel2.AudioClip, Is.EqualTo(audioClip2));
+                Assert.That(channel3.AudioClip, Is.EqualTo(audioClip2));
                 audioClip2.Dispose();
-                Assert.AreEqual(channel2.AudioClip, null);
-                Assert.AreEqual(channel3.AudioClip, null);
+                Assert.That(channel2.AudioClip, Is.EqualTo(null));
+                Assert.That(channel3.AudioClip, Is.EqualTo(null));
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using MeltySynth;
 using NAudio.Wave;
 using DrippyAL;
-using System.Numerics;
 
 public static class Examples
 {
