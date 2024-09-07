@@ -1,3 +1,7 @@
+# v2.1.3
+
+- Updated Silk.NET to 2.21.0.
+
 # v2.1.2
 
 - Updated Silk.NET to 2.17.1.
